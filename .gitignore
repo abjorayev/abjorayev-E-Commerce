@@ -1,8 +1,9 @@
-E-Commerce.sln
+
 E-Commerce/E-Commerce.scproj
 E-Commerce/E-Commerce.scproj.user
 E-Commerce/E-Commerce.scproj.http
 E-Commerce/appsettings.json
-E-Commerce/bin
-E-Commerce/obj
-E-Commerce/Properties
+E-Commerce/bin/
+E-Commerce/obj/
+E-Commerce/Properties/
+.vs/
