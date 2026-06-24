@@ -1,4 +1,4 @@
-
+E-Commerce.sln
 E-Commerce/E-Commerce.csproj
 E-Commerce/E-Commerce.csproj.user
 E-Commerce/E-Commerce.http
@@ -7,3 +7,5 @@ E-Commerce/bin/
 E-Commerce/obj/
 E-Commerce/Properties/
 .vs/
+ECommerce.Infrastructure/obj/
+ECommerce.Infrastructure/bin/
