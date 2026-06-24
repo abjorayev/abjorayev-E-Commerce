@@ -9,3 +9,6 @@ E-Commerce/Properties/
 .vs/
 ECommerce.Infrastructure/obj/
 ECommerce.Infrastructure/bin/
+E-Commerce.Domain/obj/
+E-Commerce.Domain/bin/
+
