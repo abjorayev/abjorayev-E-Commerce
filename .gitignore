@@ -11,4 +11,8 @@ ECommerce.Infrastructure/obj/
 ECommerce.Infrastructure/bin/
 E-Commerce.Domain/obj/
 E-Commerce.Domain/bin/
-
+E-Commerce.Repository/obj/
+E-Commerce.Repository/bin/
+E-Commerce.Application/obj/
+E-Commerce.Application/bin/
+logs/
