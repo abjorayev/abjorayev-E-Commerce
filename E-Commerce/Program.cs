@@ -27,6 +27,8 @@ Log.Information("=== ECommerce API Starting ===");
 
 builder.Services.AddControllers();
 builder.Services.AddProjectServices();
+builder.Services.AddIdentity(builder.Configuration);
+builder.Services.AddSwaggerIdentity();
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("ECommerceConnection")));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -43,7 +45,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
