@@ -28,8 +28,8 @@ namespace E_Commerce.Application.TokenService
         {
             var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Name, user?.UserName)
+            new Claim("UserId", user.Id),
+            new Claim("UserName", user?.UserName) 
         };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));

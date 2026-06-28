@@ -14,13 +14,15 @@ namespace E_Commerce.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly TokenService _tokenService;
 
-        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, TokenService tokenService)
+        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, TokenService tokenService, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
+            _roleManager = roleManager;
         }
 
         [HttpPost("register")]
@@ -31,11 +33,17 @@ namespace E_Commerce.Controllers
                 UserName = dto.Login
             };
 
-            var result = await _userManager.CreateAsync(user, dto.Password);
+            if (!await _roleManager.RoleExistsAsync("User"))
+                await _roleManager.CreateAsync(new IdentityRole("User"));
 
+            
+            var result = await _userManager.CreateAsync(user, dto.Password);
+            
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
+            await _userManager.AddToRoleAsync(user, "User");
+          
             return Ok("User registered successfully");
         }
 
