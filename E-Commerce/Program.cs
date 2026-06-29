@@ -1,6 +1,8 @@
+using E_Commerce.Application.Mapper;
 using E_Commerce.DependencyInjections;
 using ECommerce.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,7 +26,7 @@ builder.Host.UseSerilog();
 Log.Information("=== ECommerce API Starting ===");
 
 // Add services to the container.
-
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddControllers();
 builder.Services.AddProjectServices();
 builder.Services.AddIdentity(builder.Configuration);
