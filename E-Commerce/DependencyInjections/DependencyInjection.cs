@@ -1,4 +1,6 @@
-﻿using E_Commerce.Application.TokenService;
+﻿using E_Commerce.Application.ApplicationService;
+using E_Commerce.Application.ProductService;
+using E_Commerce.Application.TokenService;
 using E_Commerce.Domain.Entities;
 using E_Commerce.Repository;
 using ECommerce.Infrastructure.Context;
@@ -16,6 +18,7 @@ namespace E_Commerce.DependencyInjections
         {
             services.AddScoped(typeof(IECommerceRepository<>), typeof(ECommerceRepository<>));
             services.AddScoped<TokenService>();
+            services.AddScoped<IProductService, ProductService>();
             return services;
         }
 
