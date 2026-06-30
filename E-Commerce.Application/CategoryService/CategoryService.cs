@@ -60,12 +60,12 @@ namespace E_Commerce.Application.CategoryService
 
         public async Task<List<CategoryResponse>> GetAll(string lang)
         {
-            var result = _categoryRepository.Query().Select(x => new CategoryResponse
+            var result = await _categoryRepository.Query().Select(x => new CategoryResponse
             {
                 Id = x.Id,
                 Description = lang == "uz" ? x.DescriptionUz : x.DescriptionRu,
                 Name = lang == "uz" ? x.NameUz : x.NameRu,
-            }).ToList();
+            }).ToListAsync();
             return result;
         }
 
@@ -73,7 +73,13 @@ namespace E_Commerce.Application.CategoryService
         {
             try
             {
-                var category = _mapper.Map<Category>(entity);
+                var category = await _categoryRepository.Query().FirstOrDefaultAsync(x => x.Id == entity.Id);
+                if (category == null) 
+                    return false;
+                category.DescriptionRu = entity.DescriptionRu;
+                category.DescriptionUz = entity.DescriptionUz;
+                category.NameUz = entity.NameUz;
+                category.NameRu = entity.NameRu;
                 await _categoryRepository.Update(category);
                 return true;
             }

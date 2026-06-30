@@ -114,7 +114,7 @@ namespace E_Commerce.Application.ProductService
 
         public async Task<ProductResponse> GetById(int id, string lang)
         {
-            var product = _productRepository.Query().FirstOrDefault(x => x.Id == id && x.Active);
+            var product = await _productRepository.Query().FirstOrDefaultAsync(x => x.Id == id && x.Active);
             if(product == null)
             {
                 _logger.LogInformation($"Product with {id} is does not exist");
@@ -136,7 +136,17 @@ namespace E_Commerce.Application.ProductService
         {
             try
             {
-                var product = _mapper.Map<Product>(entity);
+                var product = await _productRepository.Query().FirstOrDefaultAsync(x => x.Id == entity.Id);
+                if (product == null)
+                    return false;
+                product.DescriptionRu = entity.DescriptionRu;
+                product.CategoryId = entity.CategoryId;
+                product.ImageUrl = entity.ImageUrl;
+                product.Price = entity.Price;
+                product.ProductCount = entity.ProductCount;
+                product.DescriptionUz = entity.DescriptionUz;
+                product.Name = entity.Name;
+               
                 await _productRepository.Update(product);
                 return true;
             }
