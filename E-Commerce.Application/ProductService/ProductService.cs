@@ -32,7 +32,8 @@ namespace E_Commerce.Application.ProductService
             try
             {
                 var product = _mapper.Map<Product>(entity);
-                product.CreatedAt = DateTime.Now;
+                product.CreatedAt = DateTime.UtcNow;
+                product.Active = true;
                 await _productRepository.Add(product);
                 return product.Id;
             }
@@ -64,10 +65,11 @@ namespace E_Commerce.Application.ProductService
             }
         }
 
-        public async Task<PaginatedResponse<ProductDTO>> GetAll(
+        public async Task<PaginatedResponse<ProductResponse>> GetAll(
      int minPrice,
      int maxPrice,
      string search,
+     string lang,
      int page = 1,
      int rows = 20)
         {
@@ -81,7 +83,7 @@ namespace E_Commerce.Application.ProductService
                 products = products.Where(x => x.Price <= maxPrice);
 
             if (!string.IsNullOrWhiteSpace(search))
-                products = products.Where(x => x.Name.ToLower().Contains(search.ToLower()));
+                products = products.Where(x => x.Name.Replace(" ", "").ToLower().Contains(search.Replace(" ", "").ToLower()));
 
             var totalCount = await products.CountAsync();
 
@@ -90,9 +92,18 @@ namespace E_Commerce.Application.ProductService
                 .Take(rows)
                 .ToListAsync();
 
-            var result = _mapper.Map<List<ProductDTO>>(pagedProducts);
+            var result = pagedProducts.Select(x => new ProductResponse
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Description = lang == "uz" ? x.DescriptionUz : x.DescriptionRu,
+                CategoryId = x.CategoryId,
+                ImageUrl = x.ImageUrl,
+                Price = x.Price,
+                ProductCount = x.ProductCount
+            }).ToList();
 
-            return new PaginatedResponse<ProductDTO>
+            return new PaginatedResponse<ProductResponse>
             {
                 Items = result,
                 TotalCount = totalCount,
@@ -101,7 +112,7 @@ namespace E_Commerce.Application.ProductService
             };
         }
 
-        public async Task<ProductDTO> GetById(int id)
+        public async Task<ProductResponse> GetById(int id, string lang)
         {
             var product = _productRepository.Query().FirstOrDefault(x => x.Id == id && x.Active);
             if(product == null)
@@ -109,7 +120,16 @@ namespace E_Commerce.Application.ProductService
                 _logger.LogInformation($"Product with {id} is does not exist");
                 return null; 
             }
-            return _mapper.Map<ProductDTO>(product);
+            return new ProductResponse
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = lang == "uz" ? product.DescriptionUz : product.DescriptionRu,
+                CategoryId = product.CategoryId,
+                ImageUrl = product.ImageUrl,
+                Price = product.Price,
+                ProductCount = product.ProductCount
+            };
         }
 
         public async Task<bool> Update(ProductDTO entity)
