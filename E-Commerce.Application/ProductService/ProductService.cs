@@ -43,7 +43,7 @@ namespace E_Commerce.Application.ProductService
             }
         }
 
-        public async Task Delete(int id)
+        public async Task<bool> Delete(int id)
         {
             try
             {
@@ -51,9 +51,11 @@ namespace E_Commerce.Application.ProductService
                 if(product == null)
                 {
                     _logger.LogInformation($"Product with {id} is does not exist");
-                    return;
+                    return false;
                 }
-                await _productRepository.Delete(product);
+                product.Active = false;
+                await _productRepository.Update(product);
+                return true;
             }
             catch (Exception ex)
             {
@@ -101,7 +103,7 @@ namespace E_Commerce.Application.ProductService
 
         public async Task<ProductDTO> GetById(int id)
         {
-            var product = _productRepository.Query().FirstOrDefault(x => x.Id == id);
+            var product = _productRepository.Query().FirstOrDefault(x => x.Id == id && x.Active);
             if(product == null)
             {
                 _logger.LogInformation($"Product with {id} is does not exist");
@@ -110,12 +112,13 @@ namespace E_Commerce.Application.ProductService
             return _mapper.Map<ProductDTO>(product);
         }
 
-        public async Task Update(ProductDTO entity)
+        public async Task<bool> Update(ProductDTO entity)
         {
             try
             {
                 var product = _mapper.Map<Product>(entity);
                 await _productRepository.Update(product);
+                return true;
             }
             catch (Exception ex)
             {
