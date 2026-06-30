@@ -9,7 +9,9 @@ namespace E_Commerce.Domain.Entities
     public class Category
     {
         public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        public string NameRu { get; set; } = string.Empty;
+        public string NameUz {  get; set; } = string.Empty;
+        public string DescriptionRu { get; set; } = string.Empty;
+        public string DescriptionUz { get; set;} = string.Empty;
     }
 }

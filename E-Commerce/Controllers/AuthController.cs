@@ -58,7 +58,7 @@ namespace E_Commerce.Controllers
             if (!result.Succeeded)
                 return Unauthorized("Invalid credentials");
 
-            var accessToken = _tokenService.GenerateAccessToken(user);
+            var accessToken = await _tokenService.GenerateAccessToken(user);
             var refreshToken = await _tokenService.GenerateRefreshToken(user.Id);
 
             return Ok(new AuthResponseDTO
@@ -82,7 +82,7 @@ namespace E_Commerce.Controllers
             
             await _tokenService.RevokeRefreshToken(dto.RefreshToken);
 
-            var newAccessToken = _tokenService.GenerateAccessToken(user);
+            var newAccessToken = await _tokenService.GenerateAccessToken(user);
             var newRefreshToken = await _tokenService.GenerateRefreshToken(user.Id);
 
             return Ok(new AuthResponseDTO

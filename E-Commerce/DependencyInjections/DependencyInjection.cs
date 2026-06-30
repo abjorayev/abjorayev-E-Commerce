@@ -1,4 +1,5 @@
 ﻿using E_Commerce.Application.ApplicationService;
+using E_Commerce.Application.CategoryService;
 using E_Commerce.Application.ProductService;
 using E_Commerce.Application.TokenService;
 using E_Commerce.Domain.Entities;
@@ -19,6 +20,7 @@ namespace E_Commerce.DependencyInjections
             services.AddScoped(typeof(IECommerceRepository<>), typeof(ECommerceRepository<>));
             services.AddScoped<TokenService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             return services;
         }
 

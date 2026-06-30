@@ -9,7 +9,7 @@ namespace E_Commerce.Application.ApplicationService
     public interface IApplicationService<T>
     {
         Task<int> Create(T entity);
-        Task Delete(int id);
-        Task Update(T entity);
+        Task<bool> Delete(int id);
+        Task<bool> Update(T entity);
     }
 }

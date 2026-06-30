@@ -1,5 +1,6 @@
 ﻿using E_Commerce.Domain.Entities;
 using E_Commerce.Repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -18,19 +19,26 @@ namespace E_Commerce.Application.TokenService
     {
         private readonly IConfiguration _configuration;
         private readonly IECommerceRepository<RefreshToken> _refreshTokenRepository;
-        public TokenService(IConfiguration configuration, IECommerceRepository<RefreshToken> refreshTokenRepository)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public TokenService(IConfiguration configuration, IECommerceRepository<RefreshToken> refreshTokenRepository, UserManager<ApplicationUser> userManager)
         {
             _configuration = configuration;
             _refreshTokenRepository = refreshTokenRepository;
+            _userManager = userManager;
         }
 
-        public string GenerateAccessToken(ApplicationUser user)
+        public async Task<string> GenerateAccessToken(ApplicationUser user)
         {
+            var roles = await _userManager.GetRolesAsync(user);
             var claims = new List<Claim>
         {
             new Claim("UserId", user.Id),
             new Claim("UserName", user?.UserName) 
         };
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

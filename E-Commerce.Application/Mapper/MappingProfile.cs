@@ -14,6 +14,7 @@ namespace E_Commerce.Application.Mapper
         public MappingProfile()
         {
             CreateMap<Product, ProductDTO>().ReverseMap();
+            CreateMap<Category, CategoryDTO>().ReverseMap();
         }
     }
 }
