@@ -15,6 +15,7 @@ namespace E_Commerce.Application.Mapper
         {
             CreateMap<Product, ProductDTO>().ReverseMap();
             CreateMap<Category, CategoryDTO>().ReverseMap();
+            CreateMap<Order, OrderDTO>().ReverseMap();
         }
     }
 }
