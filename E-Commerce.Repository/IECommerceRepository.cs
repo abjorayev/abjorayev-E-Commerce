@@ -12,5 +12,7 @@ namespace E_Commerce.Repository
         Task Add(T entity);
         Task Update(T entity);
         Task Delete(T entity);
+        Task AddRange(List<T> values);
+        Task DeleteRange(List<T> values);
     }
 }
