@@ -1,6 +1,7 @@
 ﻿using E_Commerce.Application.ApplicationService;
 using E_Commerce.Application.CategoryService;
 using E_Commerce.Application.ProductService;
+using E_Commerce.Application.RedisService;
 using E_Commerce.Application.TokenService;
 using E_Commerce.Domain.Entities;
 using E_Commerce.Repository;
@@ -21,6 +22,7 @@ namespace E_Commerce.DependencyInjections
             services.AddScoped<TokenService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ICartRedisService, CartRedisService>();
             return services;
         }
 
