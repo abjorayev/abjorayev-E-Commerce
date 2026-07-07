@@ -11,5 +11,7 @@ namespace E_Commerce.Application.RedisService
         Task AddOrUpdateItem(int userId, int productId, int quantity);
         Task<Dictionary<int, int>> GetCart(int userId);
         Task RemoveItem(int userId, int productId);
+        Task IncreaseProductCount(int userId, int productId);
+        Task DecrementProductCount(int userId, int productId);
     }
 }

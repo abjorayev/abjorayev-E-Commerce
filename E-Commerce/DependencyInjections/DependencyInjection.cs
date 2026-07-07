@@ -1,4 +1,5 @@
 ﻿using E_Commerce.Application.ApplicationService;
+using E_Commerce.Application.CartService;
 using E_Commerce.Application.CategoryService;
 using E_Commerce.Application.ProductService;
 using E_Commerce.Application.RedisService;
@@ -23,6 +24,7 @@ namespace E_Commerce.DependencyInjections
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ICartRedisService, CartRedisService>();
+            services.AddScoped<ICartService, CartService>();
             return services;
         }
 
