@@ -11,16 +11,28 @@ namespace E_Commerce.Application.RedisService
 {
     public class CartRedisService : ICartRedisService
     {
-        private IDatabase _db;
+        private readonly IDatabase _db;
 
-        public CartRedisService(IDatabase db)
+        public CartRedisService(IConnectionMultiplexer multiplexer)
         {
-            _db = db;
+            _db = multiplexer.GetDatabase();
         }
 
         public async Task AddOrUpdateItem(int userId, int productId, int quantity)
         {
             await _db.HashSetAsync($"cart:{userId}", productId, quantity);
+            await _db.KeyExpireAsync($"cart:{userId}", TimeSpan.FromDays(3));
+        }
+
+        public async Task IncreaseProductCount(int userId, int productId)
+        {
+            await _db.HashIncrementAsync($"cart:{userId}", productId, 1);
+            await _db.KeyExpireAsync($"cart:{userId}", TimeSpan.FromDays(3));
+        }
+
+        public async Task DecrementProductCount(int userId, int productId)
+        {
+            await _db.HashDecrementAsync($"cart:{userId}", productId, 1);
             await _db.KeyExpireAsync($"cart:{userId}", TimeSpan.FromDays(3));
         }
 

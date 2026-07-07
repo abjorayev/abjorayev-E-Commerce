@@ -26,6 +26,14 @@ builder.Host.UseSerilog();
 
 Log.Information("=== ECommerce API Starting ===");
 
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+
+    return ConnectionMultiplexer.Connect(
+        configuration.GetConnectionString("Redis") ?? "");
+});
+
 // Add services to the container.
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddControllers();
@@ -35,12 +43,6 @@ builder.Services.AddSwaggerIdentity();
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("ECommerceConnection")));
 
-builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-{
-    var configuration = builder.Configuration.GetConnectionString("Redis");
-
-    return ConnectionMultiplexer.Connect(configuration ?? "");
-});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
