@@ -1,4 +1,5 @@
-﻿using E_Commerce.Application.RedisService;
+﻿using E_Commerce.Application.CartService;
+using E_Commerce.Application.RedisService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,18 +12,54 @@ namespace E_Commerce.Controllers
     [Authorize]
     public class CartController : ControllerBase
     {
-        private ICartRedisService _redisService;
+        private ICartService _cartService;
 
-        public CartController(ICartRedisService redisService)
+        public CartController(ICartService cartService)
         {
-            _redisService = redisService;
+            _cartService = cartService;
         }
-
         [HttpGet]
         public async Task<IActionResult> GetBasket()
         {
             var userId = User.FindFirstValue("UserId");
-            
+            if (userId == null) return Unauthorized();
+            var result = await _cartService.GetBasketByUserId(int.Parse(userId));
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddProductToBasket(int productId)
+        {
+            var userId = User.FindFirstValue("UserId");
+            if (userId == null) return Unauthorized();
+            await _cartService.AddProduct(int.Parse(userId), productId);
+            return Ok();
+        }
+        [HttpPut("increase")]
+        public async Task<IActionResult> IncreaseProductCount(int productId)
+        {
+            var userId = User.FindFirstValue("UserId");
+            if (userId == null) return Unauthorized();
+            await _cartService.IncreaseProductCount(int.Parse(userId), productId);
+            return Ok();
+        }
+
+        [HttpPut("decrement")]
+        public async Task<IActionResult> DecrementProductCount(int productId)
+        {
+            var userId = User.FindFirstValue("UserId");
+            if (userId == null) return Unauthorized();
+            await _cartService.DecrementProductCount(int.Parse(userId), productId);
+            return Ok();
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteProductFromBasket(int productId)
+        {
+            var userId = User.FindFirstValue("UserId");
+            if (userId == null) return Unauthorized();
+            await _cartService.DeleteProductFromBasket(int.Parse(userId), productId);
+            return Ok();
         }
     }
 }

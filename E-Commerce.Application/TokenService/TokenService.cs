@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace E_Commerce.Application.TokenService
 {
-    public class TokenService
+    public class TokenService : ITokenService
     {
         private readonly IConfiguration _configuration;
         private readonly IECommerceRepository<RefreshToken> _refreshTokenRepository;
@@ -65,7 +65,7 @@ namespace E_Commerce.Application.TokenService
             };
 
             await _refreshTokenRepository.Add(refreshToken);
-
+            await _refreshTokenRepository.SaveChanges();
             return refreshToken.Token;
         }
 
@@ -82,6 +82,7 @@ namespace E_Commerce.Application.TokenService
             {
                 refreshToken.IsRevoked = true;
                 await _refreshTokenRepository.Update(refreshToken);
+                await _refreshTokenRepository.SaveChanges();
             }
         }
 

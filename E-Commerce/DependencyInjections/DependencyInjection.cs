@@ -20,7 +20,7 @@ namespace E_Commerce.DependencyInjections
         public static IServiceCollection AddProjectServices(this IServiceCollection services)
         {
             services.AddScoped(typeof(IECommerceRepository<>), typeof(ECommerceRepository<>));
-            services.AddScoped<TokenService>();
+            services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ICartRedisService, CartRedisService>();

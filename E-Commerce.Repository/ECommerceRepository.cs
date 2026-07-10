@@ -19,25 +19,25 @@ namespace E_Commerce.Repository
         public async Task Add(T entity)
         {
             await _context.Set<T>().AddAsync(entity);
-            await _context.SaveChangesAsync();
+           // await _context.SaveChangesAsync();
         }
 
         public async Task AddRange(List<T> values)
         {
             await _context.Set<T>().AddRangeAsync(values);
-            await _context.SaveChangesAsync();
+           // await _context.SaveChangesAsync();
         }
 
         public async Task Delete(T entity)
         {
             _context.Set<T>().Remove(entity);
-            await _context.SaveChangesAsync();
+          //  await _context.SaveChangesAsync();
         }
 
         public async Task DeleteRange(List<T> values)
         {
              _context.Set<T>().RemoveRange(values);
-            await _context.SaveChangesAsync();
+           // await _context.SaveChangesAsync();
         }
 
         public IQueryable<T> Query()
@@ -48,12 +48,17 @@ namespace E_Commerce.Repository
         public async Task Update(T entity)
         {
             _context.Set<T>().Update(entity);
-            await _context.SaveChangesAsync();
+          //  await _context.SaveChangesAsync();
         }
 
         public async Task UpdateRange(List<T> values)
         {
             _context.Set<T>().UpdateRange(values);
+           // await _context.SaveChangesAsync();
+        }
+
+        public async Task SaveChanges()
+        {
             await _context.SaveChangesAsync();
         }
     }

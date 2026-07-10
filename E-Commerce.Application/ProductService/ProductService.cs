@@ -35,6 +35,7 @@ namespace E_Commerce.Application.ProductService
                 product.CreatedAt = DateTime.UtcNow;
                 product.Active = true;
                 await _productRepository.Add(product);
+                await _productRepository.SaveChanges();
                 return product.Id;
             }
             catch(Exception ex)
@@ -56,6 +57,7 @@ namespace E_Commerce.Application.ProductService
                 }
                 product.Active = false;
                 await _productRepository.Update(product);
+                await _productRepository.SaveChanges();
                 return true;
             }
             catch (Exception ex)
@@ -148,6 +150,7 @@ namespace E_Commerce.Application.ProductService
                 product.Name = entity.Name;
                
                 await _productRepository.Update(product);
+                await _productRepository.SaveChanges();
                 return true;
             }
             catch (Exception ex)

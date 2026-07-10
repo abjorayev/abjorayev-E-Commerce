@@ -31,6 +31,7 @@ namespace E_Commerce.Application.CategoryService
             {
                 var category = _mapper.Map<Category>(entity);
                 await _categoryRepository.Add(category);
+                await _categoryRepository.SaveChanges();
                 return category.Id;
             }
             catch (Exception ex)
@@ -49,6 +50,7 @@ namespace E_Commerce.Application.CategoryService
                     return false;
 
                 await _categoryRepository.Delete(category);
+                await _categoryRepository.SaveChanges();
                 return true;
             }
             catch(Exception ex)
@@ -81,6 +83,7 @@ namespace E_Commerce.Application.CategoryService
                 category.NameUz = entity.NameUz;
                 category.NameRu = entity.NameRu;
                 await _categoryRepository.Update(category);
+                await _categoryRepository.SaveChanges();
                 return true;
             }
             catch (Exception ex)
