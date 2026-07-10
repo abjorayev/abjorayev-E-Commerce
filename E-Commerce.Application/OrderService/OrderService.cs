@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace E_Commerce.Application.OrderService
 {
@@ -18,26 +19,26 @@ namespace E_Commerce.Application.OrderService
     {
         private readonly IECommerceRepository<Order> _orderRepository;
         private readonly IECommerceRepository<OrderItem> _orderItemRepository;
-        private readonly IECommerceRepository<Product> _productRepostiry;
+        private readonly IECommerceRepository<Product> _productRepository;
         private ILogger<OrderService> _logger;
         private IMapper _mapper;
 
 
         public OrderService(IECommerceRepository<Order> orderRepository, IECommerceRepository<OrderItem> orderItemRepository, 
-            ILogger<OrderService> logger, IMapper mapper, IECommerceRepository<Product> productRepostiry)
+            ILogger<OrderService> logger, IMapper mapper, IECommerceRepository<Product> productRepository)
         {
             _orderRepository = orderRepository;
             _orderItemRepository = orderItemRepository;
             _logger = logger;
             _mapper = mapper;
-            _productRepostiry = productRepostiry;
+            _productRepository = productRepository;
         }
         //TotalAmount -> idk how to for now :)
         public async Task<int> Create(OrderCreateDTO entity)
         {
             try
             {
-                var products = _productRepostiry.Query().Where(x => entity.Items.Select(x => x.ProductId).Contains(x.Id)).ToList();
+                var products = _productRepository.Query().Where(x => entity.Items.Select(x => x.ProductId).Contains(x.Id)).ToList();
                 foreach(var item in entity.Items)
                 {
                     var product = products.FirstOrDefault(x => x.Id == item.ProductId);
@@ -70,7 +71,7 @@ namespace E_Commerce.Application.OrderService
                 {
                     var product = products.FirstOrDefault(x => x.Id == item.ProductId);
                     product.ProductCount -= item.ProductCount;
-                    await _productRepostiry.Update(product);
+                    await _productRepository.Update(product);
                 }
 
                 await _orderRepository.SaveChanges();
@@ -79,7 +80,7 @@ namespace E_Commerce.Application.OrderService
             catch (Exception ex)
             {
                 _logger.LogError($"Error while adding order: {ex.Message} {ex.StackTrace}");
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
@@ -105,13 +106,13 @@ namespace E_Commerce.Application.OrderService
                 return false;
             }
         }
-        //TODO: Order Items :)
+       
         public async Task<OrderByIdResponse> GetById(int id)
         {
             var order = await  _orderRepository.Query().Include(x => x.OrderItems).FirstOrDefaultAsync(x => x.Id == id);
             if (order == null)
                 return null;
-
+            var products = await _productRepository.Query().Where(x => order.OrderItems.Select(x => x.ProductId).Contains(x.Id)).ToListAsync();
             return new OrderByIdResponse
             {
                 Id = order.Id,
@@ -121,7 +122,7 @@ namespace E_Commerce.Application.OrderService
                 TotalAmount = order.TotalAmount,
                 Items = order?.OrderItems?.Select(x => 
                 {
-                    var product = _productRepostiry.Query().FirstOrDefault(p => p.Id == x.ProductId);
+                    var product = products.FirstOrDefault(p => p.Id == x.ProductId);
                     return new OrderItemDTO
                     {
                         ProductId = x.ProductId,
@@ -137,8 +138,8 @@ namespace E_Commerce.Application.OrderService
 
         public async Task<PaginatedResponse<OrderDTO>> GetByUserId(string userId, int page = 1, int rows = 20)
         {
-            var orders = _orderRepository.Query().Where(x => x.UserId == userId).ToList();
-
+            var orders = _orderRepository.Query().Where(x => x.UserId == userId);
+            var totalCount = await orders.CountAsync();
             var pagedOrders =  orders
                 .Skip((page - 1) * rows)
                 .Take(rows)
@@ -151,7 +152,7 @@ namespace E_Commerce.Application.OrderService
                 Items = mapper.ToList(),
                 Page = page,
                 PageSize = rows,
-                TotalCount = orders.Count
+                TotalCount = totalCount
             };
         }
 

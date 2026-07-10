@@ -41,7 +41,7 @@ namespace E_Commerce.Application.ProductService
             catch(Exception ex)
             {
                 _logger.LogError($"Error while adding product: {ex.Message} {ex.StackTrace}");
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
@@ -63,7 +63,7 @@ namespace E_Commerce.Application.ProductService
             catch (Exception ex)
             {
                 _logger.LogError($"Error while deleting product: {ex.Message} {ex.StackTrace}");
-                throw new Exception(ex.Message);
+                throw ;
             }
         }
 
@@ -156,7 +156,7 @@ namespace E_Commerce.Application.ProductService
             catch (Exception ex)
             {
                 _logger.LogError($"Error while updating Product: {ex.Message} {ex.StackTrace}");
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 

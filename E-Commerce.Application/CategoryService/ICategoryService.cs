@@ -12,5 +12,6 @@ namespace E_Commerce.Application.CategoryService
     public interface ICategoryService : IApplicationService<CategoryDTO>
     {
         Task<List<CategoryResponse>> GetAll(string lang);
+        Task<bool> Update(CategoryDTO entity);
     }
 }

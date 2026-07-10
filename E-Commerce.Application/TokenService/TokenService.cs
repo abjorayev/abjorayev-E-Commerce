@@ -72,7 +72,7 @@ namespace E_Commerce.Application.TokenService
         public async Task<RefreshToken> GetActiveRefreshToken(string token)
         {
             return await _refreshTokenRepository.Query()
-                .FirstOrDefaultAsync(x => x.Token == token && !x.IsRevoked && x.ExpiresAt > DateTime.UtcNow) ?? new RefreshToken();
+                .FirstOrDefaultAsync(x => x.Token == token && !x.IsRevoked && x.ExpiresAt > DateTime.UtcNow) ?? null;
         }
 
         public async Task RevokeRefreshToken(string token)
