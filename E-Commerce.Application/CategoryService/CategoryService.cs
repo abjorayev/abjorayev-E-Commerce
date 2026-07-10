@@ -37,7 +37,7 @@ namespace E_Commerce.Application.CategoryService
             catch (Exception ex)
             {
                 _logger.LogError($"Error while adding category: {ex.Message} {ex.StackTrace}");
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
@@ -56,7 +56,7 @@ namespace E_Commerce.Application.CategoryService
             catch(Exception ex)
             {
                 _logger.LogError($"Error while deleting category: {ex.Message} {ex.StackTrace}");
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 

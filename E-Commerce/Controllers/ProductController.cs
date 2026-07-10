@@ -21,11 +21,12 @@ namespace E_Commerce.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProductDTO product)
         {
+            if (product.CategoryId == 0)
+                return BadRequest("Category can't be null");
+
             var result = await _productService.Create(product);
             if (result == 0)
                 return BadRequest("Something get wrong");
-            if (product.CategoryId == 0)
-                return BadRequest("Category can't be null");
 
             return Ok(result);
         }
