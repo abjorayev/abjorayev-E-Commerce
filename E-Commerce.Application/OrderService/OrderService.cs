@@ -38,6 +38,12 @@ namespace E_Commerce.Application.OrderService
             try
             {
                 var products = _productRepostiry.Query().Where(x => entity.Items.Select(x => x.ProductId).Contains(x.Id)).ToList();
+                foreach(var item in entity.Items)
+                {
+                    var product = products.FirstOrDefault(x => x.Id == item.ProductId);
+                    if (product == null || product.ProductCount < item.ProductCount)
+                        throw new Exception($"Product {item.ProductId} is out of stock");
+                }
                 var order = new Order
                 {
                     UserId = entity.UserId,
@@ -57,8 +63,17 @@ namespace E_Commerce.Application.OrderService
                     TotalAmount = entity.TotalAmount,
                 };
                 //var order = _mapper.Map<Order>(entity);
-                //order.CreatedAt = DateTime.Now;
+                order.CreatedAt = DateTime.UtcNow;
                 await _orderRepository.Add(order);
+
+                foreach(var item in entity.Items)
+                {
+                    var product = products.FirstOrDefault(x => x.Id == item.ProductId);
+                    product.ProductCount -= item.ProductCount;
+                    await _productRepostiry.Update(product);
+                }
+
+                await _orderRepository.SaveChanges();
                 return order.Id;
             }
             catch (Exception ex)
@@ -81,6 +96,7 @@ namespace E_Commerce.Application.OrderService
                     return false;
 
                 await _orderRepository.Delete(order);
+                await _orderRepository.SaveChanges();
                 return true;
             }
             catch(Exception ex)
@@ -153,6 +169,7 @@ namespace E_Commerce.Application.OrderService
 
             order.OrderStatus = status;
             await _orderRepository.Update(order);
+            await _orderRepository.SaveChanges();
         }
     }
 }
