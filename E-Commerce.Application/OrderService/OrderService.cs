@@ -156,12 +156,6 @@ namespace E_Commerce.Application.OrderService
             };
         }
 
-        //I guess nobody can't the order details, so i will create another method just for updating the status of the order
-        public Task<bool> Update(OrderCreateDTO entity)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task UpdateOrderStatus(OrderStatus status, int orderId)
         {
             var order = await _orderRepository.Query().FirstOrDefaultAsync(x => x.Id == orderId);
