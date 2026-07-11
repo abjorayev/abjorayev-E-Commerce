@@ -61,7 +61,7 @@ namespace E_Commerce.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(int minPrice, int maxPrice, string search, int page = 1, int row = 20)
+        public async Task<IActionResult> GetAll(int? minPrice, int? maxPrice, string? search, int page = 1, int row = 20)
         {
             string lang = Request.Headers["Accept-Language"].FirstOrDefault() ?? "ru";
             return Ok(await _productService.GetAll(minPrice, maxPrice, search, lang, page, row));

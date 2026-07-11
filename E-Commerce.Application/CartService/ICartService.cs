@@ -14,5 +14,6 @@ namespace E_Commerce.Application.CartService
         Task IncreaseProductCount(string userId, int productId);
         Task DecrementProductCount(string userId, int productId);
         Task DeleteProductFromBasket(string userId, int productId);
+        Task DeleteBasket(string userId);
     }
 }

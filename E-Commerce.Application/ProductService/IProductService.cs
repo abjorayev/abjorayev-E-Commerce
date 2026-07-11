@@ -12,7 +12,7 @@ namespace E_Commerce.Application.ProductService
 {
     public interface IProductService : IApplicationService<ProductDTO>
     {
-        Task<PaginatedResponse<ProductResponse>> GetAll(int minPrice, int maxPrice, string search, string lang, int page = 1, int rows = 20);
+        Task<PaginatedResponse<ProductResponse>> GetAll(int? minPrice, int? maxPrice, string? search, string lang, int page = 1, int rows = 20);
         Task< ProductResponse> GetById(int id, string lang);
         Task<bool> Update(ProductDTO entity);
     }
