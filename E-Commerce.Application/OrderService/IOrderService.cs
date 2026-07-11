@@ -10,10 +10,12 @@ using System.Threading.Tasks;
 
 namespace E_Commerce.Application.OrderService
 {
-    public interface IOrderService : IApplicationService<OrderCreateDTO>
+    public interface IOrderService 
     {
         Task<PaginatedResponse<OrderDTO>> GetByUserId(string userId, int page = 1, int rows = 20);
         Task<OrderByIdResponse> GetById(int id);
         Task UpdateOrderStatus(OrderStatus status, int orderId);
+        Task<bool> Delete(int id);
+        Task<int> Create(OrderCreateDTO createDTO);
     }
 }

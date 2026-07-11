@@ -22,7 +22,7 @@ namespace E_Commerce.Application.CartService
             _productRepository = productRepository;
         }
 
-        public async Task<List<CartProductDTO>> GetBasketByUserId(int userId)
+        public async Task<List<CartProductDTO>> GetBasketByUserId(string userId)
         {
             var redisBasket = await _redisService.GetCart(userId);
             var products = await _productRepository.Query().Where(x => redisBasket.Keys.Contains(x.Id) && x.Active).ToListAsync();
@@ -31,26 +31,27 @@ namespace E_Commerce.Application.CartService
                 ProductId = x.Id,
                 ProductName = x.Name,
                 ProductPhoto = x.ImageUrl,
-                ProductQuantity = redisBasket[x.Id]
+                ProductQuantity = redisBasket[x.Id],
+                ProductPrice = redisBasket[x.Id] * x.Price,
             }).ToList();
         }
 
-        public async Task AddProduct(int userId, int productId)
+        public async Task AddProduct(string userId, int productId)
         {
             await _redisService.AddOrUpdateItem(userId, productId, 1);
         }
 
-        public async Task IncreaseProductCount(int userId, int productId)
+        public async Task IncreaseProductCount(string userId, int productId)
         {
             await _redisService.IncreaseProductCount(userId, productId);
         }
 
-        public async Task DecrementProductCount(int userId, int productId)
+        public async Task DecrementProductCount(string userId, int productId)
         {
             await _redisService.DecrementProductCount(userId, productId);
         }
 
-        public async Task DeleteProductFromBasket(int userId, int productId)
+        public async Task DeleteProductFromBasket(string userId, int productId)
         {
             await _redisService.RemoveItem(userId, productId);
         }

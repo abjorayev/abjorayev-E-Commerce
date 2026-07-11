@@ -8,10 +8,10 @@ namespace E_Commerce.Application.RedisService
 {
     public interface ICartRedisService
     {
-        Task AddOrUpdateItem(int userId, int productId, int quantity);
-        Task<Dictionary<int, int>> GetCart(int userId);
-        Task RemoveItem(int userId, int productId);
-        Task IncreaseProductCount(int userId, int productId);
-        Task DecrementProductCount(int userId, int productId);
+        Task AddOrUpdateItem(string userId, int productId, int quantity);
+        Task<Dictionary<int, int>> GetCart(string userId);
+        Task RemoveItem(string userId, int productId);
+        Task IncreaseProductCount(string userId, int productId);
+        Task DecrementProductCount(string userId, int productId);
     }
 }

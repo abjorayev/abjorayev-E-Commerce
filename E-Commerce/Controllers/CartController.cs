@@ -23,7 +23,7 @@ namespace E_Commerce.Controllers
         {
             var userId = User.FindFirstValue("UserId");
             if (userId == null) return Unauthorized();
-            var result = await _cartService.GetBasketByUserId(int.Parse(userId));
+            var result = await _cartService.GetBasketByUserId(userId);
             return Ok(result);
         }
 
@@ -32,7 +32,7 @@ namespace E_Commerce.Controllers
         {
             var userId = User.FindFirstValue("UserId");
             if (userId == null) return Unauthorized();
-            await _cartService.AddProduct(int.Parse(userId), productId);
+            await _cartService.AddProduct(userId, productId);
             return Ok();
         }
         [HttpPut("increase")]
@@ -40,7 +40,7 @@ namespace E_Commerce.Controllers
         {
             var userId = User.FindFirstValue("UserId");
             if (userId == null) return Unauthorized();
-            await _cartService.IncreaseProductCount(int.Parse(userId), productId);
+            await _cartService.IncreaseProductCount(userId, productId);
             return Ok();
         }
 
@@ -49,7 +49,7 @@ namespace E_Commerce.Controllers
         {
             var userId = User.FindFirstValue("UserId");
             if (userId == null) return Unauthorized();
-            await _cartService.DecrementProductCount(int.Parse(userId), productId);
+            await _cartService.DecrementProductCount(userId, productId);
             return Ok();
         }
 
@@ -58,7 +58,7 @@ namespace E_Commerce.Controllers
         {
             var userId = User.FindFirstValue("UserId");
             if (userId == null) return Unauthorized();
-            await _cartService.DeleteProductFromBasket(int.Parse(userId), productId);
+            await _cartService.DeleteProductFromBasket(userId, productId);
             return Ok();
         }
     }

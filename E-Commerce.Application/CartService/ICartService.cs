@@ -9,10 +9,10 @@ namespace E_Commerce.Application.CartService
 {
     public interface ICartService
     {
-        Task<List<CartProductDTO>> GetBasketByUserId(int userId);
-        Task AddProduct(int userId, int productId);
-        Task IncreaseProductCount(int userId, int productId);
-        Task DecrementProductCount(int userId, int productId);
-        Task DeleteProductFromBasket(int userId, int productId);
+        Task<List<CartProductDTO>> GetBasketByUserId(string userId);
+        Task AddProduct(string userId, int productId);
+        Task IncreaseProductCount(string userId, int productId);
+        Task DecrementProductCount(string userId, int productId);
+        Task DeleteProductFromBasket(string userId, int productId);
     }
 }
