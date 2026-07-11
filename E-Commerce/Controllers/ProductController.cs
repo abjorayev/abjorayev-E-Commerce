@@ -17,7 +17,7 @@ namespace E_Commerce.Controllers
            _productService = productService;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Seller")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProductDTO product)
         {
@@ -31,7 +31,7 @@ namespace E_Commerce.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Seller")]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] ProductDTO product)
         {

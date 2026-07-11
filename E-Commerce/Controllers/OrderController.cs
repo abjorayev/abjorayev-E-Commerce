@@ -31,6 +31,7 @@ namespace E_Commerce.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin, Delivery")]
         public async Task<IActionResult> UpdateOrderStatus(int orderId, OrderStatus orderStatus)
         {
             return Ok(_orderService.UpdateOrderStatus(orderStatus, orderId));

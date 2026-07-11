@@ -1,6 +1,8 @@
 using E_Commerce.Application.Mapper;
 using E_Commerce.DependencyInjections;
+using E_Commerce.MiddleWare;
 using ECommerce.Infrastructure.Context;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -60,7 +62,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.MapControllers();
 
 app.Run();
