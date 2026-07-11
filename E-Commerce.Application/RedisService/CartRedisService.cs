@@ -49,5 +49,10 @@ namespace E_Commerce.Application.RedisService
         {
             await _db.HashDeleteAsync($"cart:{userId}", productId);
         }
+
+        public async Task Delete(string userId)
+        {
+            await _db.KeyDeleteAsync(userId);
+        }
     }
 }

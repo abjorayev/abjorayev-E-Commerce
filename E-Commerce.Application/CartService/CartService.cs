@@ -55,5 +55,10 @@ namespace E_Commerce.Application.CartService
         {
             await _redisService.RemoveItem(userId, productId);
         }
+
+        public async Task DeleteBasket(string userId)
+        {
+            await _redisService.Delete(userId);
+        }
     }
 }

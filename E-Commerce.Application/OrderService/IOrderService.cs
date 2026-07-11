@@ -13,7 +13,7 @@ namespace E_Commerce.Application.OrderService
     public interface IOrderService 
     {
         Task<PaginatedResponse<OrderDTO>> GetByUserId(string userId, int page = 1, int rows = 20);
-        Task<OrderByIdResponse> GetById(int id);
+        Task<OrderByIdResponse> GetById(int id, string userId);
         Task UpdateOrderStatus(OrderStatus status, int orderId);
         Task<bool> Delete(int id);
         Task<int> Create(OrderCreateDTO createDTO);

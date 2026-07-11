@@ -67,7 +67,7 @@ namespace E_Commerce.Application.OrderService
                             ProductCount = x.ProductQuantity,
                             PriceAtPurchase = productInfo?.Price * x.ProductQuantity ?? 0
                         };
-                    }),
+                    }).ToList(),
                     TotalAmount = currentCart.Sum(x => x.ProductPrice)
                 };
                 //var order = _mapper.Map<Order>(entity);
@@ -82,6 +82,7 @@ namespace E_Commerce.Application.OrderService
                 }
 
                 await _orderRepository.SaveChanges();
+                await _cartService.DeleteBasket(createDTO.UserId);
                 return order.Id;
             }
             catch (Exception ex)
@@ -114,11 +115,13 @@ namespace E_Commerce.Application.OrderService
             }
         }
        
-        public async Task<OrderByIdResponse> GetById(int id)
+        public async Task<OrderByIdResponse> GetById(int id, string userId)
         {
             var order = await  _orderRepository.Query().Include(x => x.OrderItems).FirstOrDefaultAsync(x => x.Id == id);
             if (order == null)
                 return null;
+            if (order.UserId != userId)
+                throw new Exception("You can't see other person order");
             var products = await _productRepository.Query().Where(x => order.OrderItems.Select(x => x.ProductId).Contains(x.Id)).ToListAsync();
             return new OrderByIdResponse
             {

@@ -13,5 +13,6 @@ namespace E_Commerce.Application.RedisService
         Task RemoveItem(string userId, int productId);
         Task IncreaseProductCount(string userId, int productId);
         Task DecrementProductCount(string userId, int productId);
+        Task Delete(string userId);
     }
 }

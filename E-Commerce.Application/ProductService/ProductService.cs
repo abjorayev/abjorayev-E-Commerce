@@ -68,9 +68,9 @@ namespace E_Commerce.Application.ProductService
         }
 
         public async Task<PaginatedResponse<ProductResponse>> GetAll(
-     int minPrice,
-     int maxPrice,
-     string search,
+     int? minPrice,
+     int? maxPrice,
+     string? search,
      string lang,
      int page = 1,
      int rows = 20)
