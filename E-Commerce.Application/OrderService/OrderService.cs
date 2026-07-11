@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using E_Commerce.Application.CartService;
 using E_Commerce.Application.DTO;
 using E_Commerce.Application.Response;
 using E_Commerce.Domain.Entities;
@@ -22,55 +23,61 @@ namespace E_Commerce.Application.OrderService
         private readonly IECommerceRepository<Product> _productRepository;
         private ILogger<OrderService> _logger;
         private IMapper _mapper;
-
+        private ICartService _cartService;
 
         public OrderService(IECommerceRepository<Order> orderRepository, IECommerceRepository<OrderItem> orderItemRepository, 
-            ILogger<OrderService> logger, IMapper mapper, IECommerceRepository<Product> productRepository)
+            ILogger<OrderService> logger, IMapper mapper, IECommerceRepository<Product> productRepository, ICartService cartService)
         {
             _orderRepository = orderRepository;
             _orderItemRepository = orderItemRepository;
             _logger = logger;
             _mapper = mapper;
             _productRepository = productRepository;
+            _cartService = cartService;
         }
         //TotalAmount -> idk how to for now :)
-        public async Task<int> Create(OrderCreateDTO entity)
+        //TODO: I should take info from basket only by myself, and OrderCreate should have only userId, so OrderCreateDTO will be deleted.
+        public async Task<int> Create(OrderCreateDTO createDTO)
         {
             try
             {
-                var products = _productRepository.Query().Where(x => entity.Items.Select(x => x.ProductId).Contains(x.Id)).ToList();
-                foreach(var item in entity.Items)
+                var currentCart = await _cartService.GetBasketByUserId(createDTO.UserId);
+                if (currentCart.Count == 0)
+                    throw new Exception("Cart is empty");
+
+                var products = _productRepository.Query().Where(x => currentCart.Select(x => x.ProductId).Contains(x.Id)).ToList();
+                foreach(var item in currentCart)
                 {
                     var product = products.FirstOrDefault(x => x.Id == item.ProductId);
-                    if (product == null || product.ProductCount < item.ProductCount)
+                    if (product == null || product.ProductCount < item.ProductQuantity)
                         throw new Exception($"Product {item.ProductId} is out of stock");
                 }
                 var order = new Order
                 {
-                    UserId = entity.UserId,
-                    DeliveryAddress = entity.DeliveryAddress,
+                    UserId = createDTO.UserId,
+                    DeliveryAddress = createDTO.DeliveryAddress,
                     CreatedAt = DateTime.UtcNow,
                     OrderStatus = OrderStatus.InProcess,
-                    OrderItems = entity.Items.Select(x =>
+                    OrderItems = currentCart.Select(x =>
                     {
                         var productInfo = products.FirstOrDefault(p => p.Id == x.ProductId);
                         return new OrderItem
                         {
                             ProductId = x.ProductId,
-                            ProductCount = x.ProductCount,
-                            PriceAtPurchase = productInfo?.Price * x.ProductCount ?? 0
+                            ProductCount = x.ProductQuantity,
+                            PriceAtPurchase = productInfo?.Price * x.ProductQuantity ?? 0
                         };
                     }),
-                    TotalAmount = entity.TotalAmount,
+                    TotalAmount = currentCart.Sum(x => x.ProductPrice)
                 };
                 //var order = _mapper.Map<Order>(entity);
                 order.CreatedAt = DateTime.UtcNow;
                 await _orderRepository.Add(order);
 
-                foreach(var item in entity.Items)
+                foreach(var item in currentCart)
                 {
                     var product = products.FirstOrDefault(x => x.Id == item.ProductId);
-                    product.ProductCount -= item.ProductCount;
+                    product.ProductCount -= item.ProductQuantity;
                     await _productRepository.Update(product);
                 }
 

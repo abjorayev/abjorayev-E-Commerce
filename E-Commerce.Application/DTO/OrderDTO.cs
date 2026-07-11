@@ -20,8 +20,8 @@ namespace E_Commerce.Application.DTO
     {
         public string UserId { get; set; }
         public string DeliveryAddress { get; set; }
-        public int TotalAmount { get; set; }
-        public List<OrderCreateItemDTO> Items { get; set; } = new();
+     //   public int TotalAmount { get; set; }
+      
         
     }
 

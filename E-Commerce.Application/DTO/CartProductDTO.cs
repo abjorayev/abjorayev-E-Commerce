@@ -12,5 +12,6 @@ namespace E_Commerce.Application.DTO
         public string ProductName { get; set; } = string.Empty;
         public string ProductPhoto {  get; set; } = string.Empty;
         public int ProductQuantity { get; set; }
+        public int ProductPrice { get; set; }
     }
 }
