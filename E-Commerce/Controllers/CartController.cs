@@ -1,5 +1,6 @@
 ﻿using E_Commerce.Application.CartService;
 using E_Commerce.Application.RedisService;
+using E_Commerce.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -59,6 +60,15 @@ namespace E_Commerce.Controllers
             var userId = User.FindFirstValue("UserId");
             if (userId == null) return Unauthorized();
             await _cartService.DeleteProductFromBasket(userId, productId);
+            return Ok();
+        }
+
+        [HttpDelete("DeleteBasket")]
+        public async Task<IActionResult> DeleteBasket()
+        {
+            var userId = User.FindFirstValue("UserId");
+            if (userId == null) return Unauthorized();
+            await _cartService.DeleteBasket(userId);
             return Ok();
         }
     }

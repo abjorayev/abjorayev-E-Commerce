@@ -114,7 +114,29 @@ namespace E_Commerce.Application.OrderService
                 return false;
             }
         }
-       
+
+        public async Task<PaginatedResponse<OrderDTO>> GetAllOrders(int page = 1, int rows = 20)
+        {
+            var query = _orderRepository.Query();
+
+            var totalCount = await query.CountAsync(); 
+
+            var orders = await query
+                .Skip((page - 1) * rows)
+                .Take(rows)
+                .ToListAsync(); 
+
+            var mapped = _mapper.Map<List<OrderDTO>>(orders);
+
+            return new PaginatedResponse<OrderDTO>
+            {
+                Items = mapped,
+                Page = page,
+                PageSize = rows,
+                TotalCount = totalCount
+            };
+        }
+
         public async Task<OrderByIdResponse> GetById(int id, string userId)
         {
             var order = await  _orderRepository.Query().Include(x => x.OrderItems).FirstOrDefaultAsync(x => x.Id == id);
@@ -176,5 +198,7 @@ namespace E_Commerce.Application.OrderService
             await _orderRepository.Update(order);
             await _orderRepository.SaveChanges();
         }
+
+
     }
 }

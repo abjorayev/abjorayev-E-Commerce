@@ -52,5 +52,12 @@ namespace E_Commerce.Controllers
             if (userId == null) return Unauthorized();
             return Ok(await _orderService.GetById(id, userId));
         }
+
+        [HttpGet("GetOrdersForAdmin")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetOrdersForAdmin(int page = 1, int rows = 20)
+        {
+            return Ok(await _orderService.GetAllOrders(page, rows));
+        }
     }
 }
