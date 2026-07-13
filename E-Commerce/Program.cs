@@ -1,5 +1,6 @@
 using E_Commerce.Application.Mapper;
 using E_Commerce.DependencyInjections;
+using E_Commerce.Domain.Entities;
 using E_Commerce.MiddleWare;
 using ECommerce.Infrastructure.Context;
 using Microsoft.AspNetCore.Diagnostics;
@@ -55,14 +56,31 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+    db.Database.Migrate();
+
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
     var roles = new[] { "Admin", "User", "Seller", "Delivery" };
     foreach (var role in roles)
     {
         if (!await roleManager.RoleExistsAsync(role))
             await roleManager.CreateAsync(new IdentityRole(role));
     }
+
+    var adminUserName = "admin";
+    var adminUser = await userManager.FindByNameAsync(adminUserName);
+    if(adminUser == null)
+    {
+        adminUser = new ApplicationUser { UserName = adminUserName };
+        await userManager.CreateAsync(adminUser, configuration["Admin:Password"]);
+        await userManager.AddToRoleAsync(adminUser, "Admin");
+    }
+
+   // var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+    //dbContext.Database.Migrate();
 }
 
 // Configure the HTTP request pipeline.
