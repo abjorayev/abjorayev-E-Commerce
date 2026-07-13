@@ -38,6 +38,9 @@ namespace E_Commerce.Application.CartService
 
         public async Task AddProduct(string userId, int productId)
         {
+            var product = await _productRepository.Query().FirstOrDefaultAsync(x => x.Id == productId);
+            if (product == null || product.ProductCount == 0)
+                throw new Exception("Product is null or empty");
             await _redisService.AddOrUpdateItem(userId, productId, 1);
         }
 

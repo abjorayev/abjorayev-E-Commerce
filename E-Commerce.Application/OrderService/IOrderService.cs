@@ -17,5 +17,6 @@ namespace E_Commerce.Application.OrderService
         Task UpdateOrderStatus(OrderStatus status, int orderId);
         Task<bool> Delete(int id);
         Task<int> Create(OrderCreateDTO createDTO);
+        Task<PaginatedResponse<OrderDTO>> GetAllOrders(int page = 1, int rows = 20);
     }
 }
