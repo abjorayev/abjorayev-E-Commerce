@@ -16,3 +16,5 @@ E-Commerce.Repository/bin/
 E-Commerce.Application/obj/
 E-Commerce.Application/bin/
 logs/
+E-Commerce.Tests/obj/
+E-Commerce.Tests/bin/
