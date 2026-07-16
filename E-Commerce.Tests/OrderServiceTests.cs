@@ -8,12 +8,14 @@ using E_Commerce.Domain.Entities;
 using E_Commerce.Repository;
 using Microsoft.Extensions.Logging;
 using Moq;
+using MockQueryable.Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using MockQueryable;
 
 namespace E_Commerce.Tests
 {
@@ -222,6 +224,40 @@ namespace E_Commerce.Tests
             var result = await _orderService.Delete(2);
             
             Assert.False(result);
+        }
+
+        [Fact]
+        public async Task Delete_WhenOrderExists_ShouldReturnTrue()
+        {
+            var orders = new List<Order>
+{
+    new Order { Id = 1 }
+};
+
+           var ordersMock = orders.BuildMock<Order>();
+            _orderRepositoryMock
+                .Setup(x => x.Query())
+                .Returns(ordersMock);
+
+            var orderItems = new List<OrderItem>()
+            {
+                new OrderItem {Id = 1, OrderId = 1}
+            }.AsQueryable();
+
+            _orderRepositoryMock.Setup(x => x.Delete(It.IsAny<Order>())).Returns(Task.CompletedTask);
+            _orderRepositoryMock.Setup(x => x.SaveChanges()).Returns(Task.CompletedTask);
+            _orderItemRepositoryMock
+    .Setup(x => x.DeleteRange(It.IsAny<List<OrderItem>>()))
+    .Returns(Task.CompletedTask);
+            _orderItemRepositoryMock.Setup(x => x.SaveChanges()).Returns(Task.CompletedTask);
+
+            _orderItemRepositoryMock
+                .Setup(x => x.Query())
+                .Returns(orderItems);
+
+            var result = await _orderService.Delete(1);
+
+            Assert.True(result);
         }
     }
 }
