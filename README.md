@@ -27,7 +27,7 @@ API will be available at: http://localhost:5000/swagger
 
 ### Default Admin credentials
 - Username: admin
-- Password: admin123!
+- Password: Admin123!
 
 ## Architecture
 
