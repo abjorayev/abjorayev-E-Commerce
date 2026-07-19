@@ -17,12 +17,14 @@ namespace E_Commerce.Application.CategoryService
         private readonly IECommerceRepository<Category> _categoryRepository;
         private ILogger<CategoryService> _logger;
         private IMapper _mapper;
+        private IRedisService.IRedisService _redisService;
 
-        public CategoryService(IECommerceRepository<Category> categoryRepository, ILogger<CategoryService> logger, IMapper mapper)
+        public CategoryService(IECommerceRepository<Category> categoryRepository, ILogger<CategoryService> logger, IMapper mapper, IRedisService.IRedisService redisService)
         {
             _categoryRepository = categoryRepository;
             _logger = logger;
             _mapper = mapper;
+            _redisService = redisService;   
         }
 
         public async Task<int> Create(CategoryDTO entity)
@@ -51,6 +53,8 @@ namespace E_Commerce.Application.CategoryService
 
                 await _categoryRepository.Delete(category);
                 await _categoryRepository.SaveChanges();
+                await _redisService.DeleteRedisData("category:{uz}");
+                await _redisService.DeleteRedisData("category:{ru}");
                 return true;
             }
             catch(Exception ex)
@@ -62,12 +66,16 @@ namespace E_Commerce.Application.CategoryService
 
         public async Task<List<CategoryResponse>> GetAll(string lang)
         {
+            var redis = await _redisService.GetDataAsync<List<CategoryResponse>>($"category:{lang}");
+            if (redis != null)
+                return redis;
             var result = await _categoryRepository.Query().Select(x => new CategoryResponse
             {
                 Id = x.Id,
                 Description = lang == "uz" ? x.DescriptionUz : x.DescriptionRu,
                 Name = lang == "uz" ? x.NameUz : x.NameRu,
             }).ToListAsync();
+            await _redisService.SetDataAsync<List<CategoryResponse>>($"category:{lang}", result, TimeSpan.FromDays(10));
             return result;
         }
 
@@ -75,7 +83,7 @@ namespace E_Commerce.Application.CategoryService
         {
             try
             {
-                var category = await _categoryRepository.Query().FirstOrDefaultAsync(x => x.Id == entity.Id);
+                var category = await _categoryRepository.Query().AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
                 if (category == null) 
                     return false;
                 category.DescriptionRu = entity.DescriptionRu;
@@ -84,6 +92,9 @@ namespace E_Commerce.Application.CategoryService
                 category.NameRu = entity.NameRu;
                 await _categoryRepository.Update(category);
                 await _categoryRepository.SaveChanges();
+
+                await _redisService.DeleteRedisData("category:{uz}");
+                await _redisService.DeleteRedisData("category:{ru}");
                 return true;
             }
             catch (Exception ex)

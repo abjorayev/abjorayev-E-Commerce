@@ -37,7 +37,10 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
     return ConnectionMultiplexer.Connect(
         configuration.GetConnectionString("Redis") ?? "");
 });
-
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+});
 // Add services to the container.
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddControllers();

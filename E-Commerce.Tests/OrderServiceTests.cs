@@ -12,7 +12,6 @@ using MockQueryable.Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using MockQueryable;
@@ -205,7 +204,9 @@ namespace E_Commerce.Tests
             var orders = new List<Order>()
             {
                 new Order{ Id = 1, }
-            }.AsQueryable();
+            };
+
+            var ordersMock = orders.BuildMock<Order>();
 
             var orderItems = new List<OrderItem>()
             {
@@ -214,7 +215,7 @@ namespace E_Commerce.Tests
 
             _orderRepositoryMock
                .Setup(x => x.Query())
-               .Returns(orders);
+               .Returns(ordersMock);
 
             _orderItemRepositoryMock
                 .Setup(x => x.Query())
@@ -230,9 +231,9 @@ namespace E_Commerce.Tests
         public async Task Delete_WhenOrderExists_ShouldReturnTrue()
         {
             var orders = new List<Order>
-{
-    new Order { Id = 1 }
-};
+            {
+               new Order { Id = 1 }
+            };
 
            var ordersMock = orders.BuildMock<Order>();
             _orderRepositoryMock

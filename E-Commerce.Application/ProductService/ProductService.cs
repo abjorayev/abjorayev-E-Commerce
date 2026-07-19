@@ -19,8 +19,8 @@ namespace E_Commerce.Application.ProductService
         private readonly IECommerceRepository<Product> _productRepository;
         private ILogger<ProductService> _logger;
         private IMapper _mapper;
-
-        public ProductService(IECommerceRepository<Product> productRepository, ILogger<ProductService> logger, IMapper mapper)
+       
+        public ProductService(IECommerceRepository<Product> productRepository, ILogger<ProductService> logger, IMapper mapper, IRedisService.IRedisService redisService)
         {
             _productRepository = productRepository;
             _logger = logger;
@@ -75,7 +75,7 @@ namespace E_Commerce.Application.ProductService
      int page = 1,
      int rows = 20)
         {
-            var products = _productRepository.Query()
+            var products = _productRepository.Query().AsNoTracking()
                 .Where(x => x.Active);
 
             if (minPrice > 0)
