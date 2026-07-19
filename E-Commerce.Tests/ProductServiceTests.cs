@@ -43,7 +43,7 @@ namespace E_Commerce.Tests
     .Returns( new Product() { CategoryId = 1, DescriptionUz = "test", DescriptionRu = "test",
     ImageUrl = "test", Name = "test", Price = 10, ProductCount = 15} );
 
-            var category = new Category { Id = 1 };
+          //  var category = new Category { Id = 1 };
             var product = new ProductDTO
             {
                 CategoryId = 1,
@@ -63,7 +63,6 @@ namespace E_Commerce.Tests
         [Fact]
         public async Task Delete_WhenProductNotFound_ShouldReturnFalse()
         {
-            var category = new Category() { Id = 1 };
             var product = new List<Product>() { new Product { Id = 1, CategoryId = 1} };
 
             var productMock = product.BuildMock<Product>();
@@ -80,7 +79,6 @@ namespace E_Commerce.Tests
         [Fact]
         public async Task Delete_WhenProductExists_ShouldSetActiveToFalse()
         {
-            var category = new Category() { Id = 1 };
             var product = new List<Product>() { new Product { Id = 1, CategoryId = 1, Active = true } };
 
             var productMock = product.BuildMock<Product>();
